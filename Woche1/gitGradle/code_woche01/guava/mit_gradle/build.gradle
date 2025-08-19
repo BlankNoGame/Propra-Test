@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'termine.Start'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+   implementation 'com.google.guava:guava:33.1.0-jre'
+}
