@@ -1,0 +1,390 @@
+= Programmierpraktikum I: Übung 3
+:icons: font
+:icon-set: fa
+:source-highlighter: rouge
+:experimental:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== Funktionale Programmierung in Java
+
+Diese Woche wollen wir uns mit der Stream-API beschäftigen und mit möglichst kleinen Funktionen
+unsere Daten transformieren.
+Wir üben dabei gleichzeitig auch den Umgang mit der IDE.
+
+Klonen Sie das Repository und Importieren Sie das gradle-Projekt in Ihre IDE.
+
+=== Zum Warmwerden
+
+Zahlen in einer `range` erzeugen:: `IntStream.range(1, 10)` erzeugt einen Stream
+von ints, welcher Zahlen von 1 bis 9 erzeugt.
+
+Mit der Funktion `forEach` können wir einzelne Elemente konsumieren und eine Funktion darauf anwenden:
+
+[source,java]
+----
+IntStream.range(1, 10)
+    .forEach(i -> System.out.println(i));
+----
+
+1. Für `i -> System.out.println(i)` gibt es eine Kurzschreibweise. Wie sieht diese aus? Probieren Sie die Schreibweise in der Klasse `Lambada` aus und führen Sie das Programm zum Testen mit der IDE aus.
+
+NOTE: Wenn das Projekt richtig importiert ist, führt die IDE im Hintergrund automatisch `gradle run` aus und zeigt Ihnen die Ausgabe an.
+
+IMPORTANT: Manche IDEs kürzen standardmäßig die Ausgabe, sodass Sie ggf. Fehlermeldungen nicht sehen. Machen Sie sich mit der Ansicht in Ihrer IDE vertraut. Wenn ein Projekt mal nicht richtig funktioniert, wenn Sie auf Play drücken, sollten Sie erst eingrenzen, ob das gradle-Projekt fehlerhaft ist oder die Projekt-Konfiguration in der IDE. Wenn ein im Terminal ausgeführtes `gradle run` funktioniert, liegt es nicht am gradle-Projekt, sondern wahrscheinlich an der IDE.
+
+2. Statt die Zahlen auszugeben, können wir den Inhalt eines Streams auch in einer `List<Integer>` speichern. Ändern Sie den im Repo vorgegebenen Code entsprechend ab.
++
+NOTE: Verwenden Sie `boxed()`. `IntStream` erweitert lediglich `BaseStream` und nicht `Stream`, weshalb wir https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html#toList()[`toList()`] erst dann verwenden können, wenn wir den `IntStream` mit `boxed()` in einen `Stream<Integer>` konvertiert haben.
+
+=== Hinweise zu dieser Übung
+
+Da vergangene Jahrgänge nach vielen Übungsaufgaben zu Streams gefragt haben, gibt es hier sehr viele Aufgaben. Es ist ziemlich unmöglich, während der Übung alle Aufgaben zu schaffen. **Suchen Sie sich gerne eine der Aufgaben „Arbeiten mit echten Daten“, „Weitere Datenverarbeitung & groupingBy“, „Eigene Kollektoren“ oder „Reduce“ aus.** Die ersten Aufgaben sind eher einfacher, die letzten für den Einstieg eher komplizierter. Steigen Sie bei dem Schwierigkeitsgrad ein, der Ihnen am liebsten ist. Zu Beginn sind jeweils die Stream-Methoden aufgeführt, die in den Aufgaben besonders geübt werden.
+
+Wenn Sie gerade nicht wissen, welche Stream-Methoden weiterhelfen können, schauen Sie sich die Vorschlagsliste der IDE an, wenn Sie `.` nach einem Stream-Objekt eintippen. Außerdem können die Dokumentationsseiten von https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html[Stream<T>], https://docs.oracle.com/en/java/javase/21/docs/api//java.base/java/util/stream/IntStream.html[IntStream] und https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/OptionalDouble.html[OptionalDouble] interessant sein.
+
+WARNING: Um die Grundlagen zu üben, ist es _nicht_ hilfreich, jetzt mit KI-Unterstützung zu arbeiten. Sie müssen erst einmal üben, wie sie „einfachere“ Probleme selbständig lösen können, damit Sie später auch schwierigere Probleme lösen können, wo die KI nicht (richtig) helfen kann. **Schalten Sie ggf. standardmäßig aktivierte KI-Vervollständigungen in Ihrer IDE erstmal ab.**
+
+Nutzen Sie die Aufgaben, die Sie heute nicht machen, gerne zur Klausurvorbereitung – in der Klausur kommt garantiert irgendwas mit Streams vor! Nach der Übung stellen wir auch einen kommentierten Lösungsvorschlag online, mit dem Sie Ihren Lösungsweg vergleichen können. Fragen Sie im Forum oder den anderen Veranstaltungen gerne nach Erklärungen, wenn etwas unklar ist.
+
+
+
+=== Arbeiten mit echten Daten
+
+_hier besonders geübt: `map`, `forEach`, `skip`, `limit`, `filter`, `count`, `mapToDouble`, `max`, `average` und `Optional.orElse`._
+
+Es gibt viele Stream-Funktionen, die Sie mit der IDE kennenlernen können.
+Das Arbeiten mit Streams kann einen Großteil Ihrer bisherigen „manuellen“ Arbeit mit Schleifen und Verzweigungen ersetzen.
+Versuchen Sie mit der Zeit ein Gefühl dafür zu bekommen, welche Stream-Operationen
+besonders nützlich sind und Ihnen in der alltäglichen Arbeit helfen können.
+Mit den folgenden Aufgaben üben wir einige typische Operationen.
+
+Wir betrachten zunächst eine https://de.wikipedia.org/wiki/CSV_(Dateiformat)[CSV-Datei], in der fiktive Klausurenergebnisse gespeichert sind.
+Eine CSV-Datei speichert eine Tabelle, wobei die einzelnen Tabellenzellen einer Zeile mit Kommata getrennt sind; die erste Zeile enthlt bei uns Spaltenüberschriften.
+
+Damit wir uns heute nicht mit dem Einlesen von Dateien beschäftigen müssen, haben wir den Dateiinhalt direkt in den Quellcode in `Punkte.java` geschrieben.
+
+Die Daten wollen wir nun auswerten.
+
+==== Aufgaben
+
+* Ermitteln Sie in der `main`-Methode der Klasse `Punkte` die Anzahl der Zeilen in der CSV-„Datei“ und geben Sie sie auf der Konsole aus. (Das geht auch ohne einen Stream.)
++
+TIP: Versuchen Sie nebenbei, Features Ihrer IDE kennenzulernen. Schauen Sie sich an, was die IDE nach `zeilen.` vorschlägt. Probieren Sie in IntelliJ auch mal `zeilen.sout` oder `zeilen.var` aus (sog. Live Templates).
+
+* Erstellen Sie aus der Liste `zeilen` einen `Stream<Klausurergebnis>`. Die Klasse `Klausurergebnis` hat einen Konstruktor, der ein `String`-Array als Parameter erwartet.
++
+TIP: Überspringen Sie die erste Zeile mit `skip(1)`.
++
+.Tipp
+[%collapsible]
+====
+1. Die erste Zeile ist die Headerzeile und muss übersprungen werden.
+
+2. Benutzen Sie String.split(String), um eine Zeile im CSV
+
+3. Mappen Sie den Konstruktor von `Klausurergebnis`.
+
+.Loesung, damit Sie weitermachen können
+[%collapsible]
+=====
+[source,java]
+-----
+zeilen.stream()
+        .skip(1)
+        .map(s -> s.split(","))
+        .map(Klausurergebnis::new)
+-----
+=====
+====
+
+* Geben Sie die Namen aller Studis aus.
+
+* Beschränken Sie die Ausgabe auf die ersten fünf Namen, damit die Standardausgabe nicht zu unübersichtlich wird. (Die relevante Stream-Methode beginnt mit `l`.)
+
+* Berechnen Sie, wie viele Studis mindestens 100 Punkte in ihrer Klausur hatten.
++
+WARNING: Denken Sie daran, dass Sie Stream-Objekte nicht wiederverwenden können. Sie müssen wieder aus der ursprünglichen Liste einen neuen Stream erzeugen oder Zwischenergebnisse als Collection speichern.
+
+* Geben Sie die Namen aller Studis aus, die mind. 100 Punkte hatten. (Kontrollergbenis: 23)
++
+WARNING: Die Punktzahl ist als `OptionalDouble` hinterlegt, da es für eine Person möglicherweise keine Klausurpunkte gibt. Sie können `orElse(x)` verwenden, wobei `x` ein geeigneter Default-Wert ist, um ein `OptionalDouble` zu einem `double` zu machen. Alternativ können Sie auch mit `OptionalDouble::isPresent` filtern und dann mit `getDouble` umwandeln.
+
+* Seien Sie kreativ und analysieren Sie die Daten:
+** Wie viele Studis sind durchgefallen? (weniger als 50 Punkte) (Kontrollergbenis: 115)
+** Wie viele haben die Hauptklausur geschrieben? (Kontrollergbenis: 277)
+** Was ist die höchste Punktzahl, die erreicht wurde? (Benutzen Sie `mapToDouble`; Kontrollergebnis: 111)
+** Was ist die Durchschnittspunktzahl in der Hauptklausur? (Kontrollergebnis: 63.6)
+
+
+NOTE: Wie hätte Ihr Code unter Nutzung von Schliefen ausgesehen? Übersichtlicher? Besser nachvollziehbar? Ihr IDE kann evtl. automatisch den Stream-Code in Schleifen-Code umformen.
+
+WARNING: Das CSV-Format sieht auf den ersten Blick einfach aus, ist aber tatsächlich https://datatracker.ietf.org/doc/html/rfc4180#section-2[komplizierter]. Verwenden Sie in der Praxis eine Bibliothek zum Einlesen von CSV-Dateien.
+  
+
+==== Weitere Datenverarbeitung & groupingBy
+
+_hier besonders geübt: `mapToDouble`, `filter`, `summaryStatistics`, `forEach`, `collect`, `groupingBy`, `distinct`, `sorted` und Formatstrings_
+
+
+Die Methode `uebungsdatenEinlesen()` der Klasse `Punkte` liefert Ihnen weitere Fake-Daten, die wir uns nun angucken. Das Format hier ist `Vorname Nachname Fach Übungspunkte Klausurergebnis_in_Prozent` (wir gehen einfach mal davon aus, dass es keine Doppelnamen gibt, sodass das Trennen mit Leerzeichen okay ist).
+
+Wie Sie die Aufgaben lösen, ist Ihnen frei gelassen, aber probieren
+Sie möglichst verschiedene Ansätze mit der Stream-API aus.
+
+* Um die Verarbeitung einfacher zu machen, ist es sinnvoll, analog zu `Klausurergebnis` z. B. eine `Studi`-Klasse anzulegen, die Vorname, Nachname, Fach, Übungspunkte und Klausurergebnis speichert. Anders als bei `Klausurergebnis` gibt es keine leeren Datenfelder; Sie brauchen also kein `Optional`.
++
+TIP: Sie können sich viel Code (insbesondere Getter) von der IDE generieren lassen.
++
+.Spoiler, wenn Sie direkt mit Streams weitermachen und nicht IDE-Features ausprobieren wollen
+[%collapsible]
+====
+[source,java]
+----
+List<Studi> studis = uebungsdatenEinlesen().stream()
+        .map(s -> s.split(" "))
+        .map(s -> new Studi(
+                s[0],
+                s[1],
+                s[2],
+                Double.parseDouble(s[3]),
+                Double.parseDouble(s[4].replace("%", ""))))
+        .toList();
+
+
+private static class Studi {
+    private final String vorname;
+    private final String nachname;
+    private final String fach;
+    private final double uebungspunkte;
+    private final double klausurergebnis;
+
+    public Studi(String vorname, String nachname, String fach, double uebungspunkte, double klausurergebnis) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.fach = fach;
+        this.uebungspunkte = uebungspunkte;
+        this.klausurergebnis = klausurergebnis;
+    }
+
+    public String getVorname() {
+        return vorname;
+    }
+
+    public String getNachname() {
+        return nachname;
+    }
+
+    public String getFach() {
+        return fach;
+    }
+
+    public double getUebungspunkte() {
+        return uebungspunkte;
+    }
+
+    public double getKlausurergebnis() {
+        return klausurergebnis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Studi studi)) return false;
+      return uebungspunkte == studi.uebungspunkte && Double.compare(klausurergebnis, studi.klausurergebnis) == 0 && Objects.equals(vorname, studi.vorname) && Objects.equals(nachname, studi.nachname) && Objects.equals(fach, studi.fach);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vorname, nachname, fach, uebungspunkte, klausurergebnis);
+    }
+}
+----
+====
+* Finden Sie die Gesamtzahl der Studis, welche die Zulassung erhalten haben (Punkte > 300).
+* Geben Sie die maximal erreichte Zulassungs-Punktzahl aus, die eine zugelassene Person erreicht hat.
+* Geben Sie den Mittelwert aller Punkte der Studis aus, welche die Zulassung erhalten haben.
++
+NOTE: Stream-Objekte können nicht wiederverwendet werden. (Ja, das ist schade.) Die Klasse `DoubleStream` hat aber eine praktische Methode `summaryStatistics`.
+
+* Geben Sie die Anzahl der Personen aus, die Mathematik studieren.
+* Geben Sie die Namen aller Mathematiker:innen aus. Versuchen Sie eine Lösung mit `filter` und eine mit `collect(groupingBy(...))` zu finden.
+* Geben Sie eine alphabetisch sortierte Liste aller Studiengänge aus. Geben Sie jedes Fach nur einmal aus:
++
+----
+Anderer
+Informatik
+Informationswissenschaften
+Mathematik
+Physik
+----
+* Zählen Sie die Häufigkeit jedes Studiengangs (Ausgabereihenfolge beliebig):
++
+----
+  22 Anderer
+ 359 Informatik
+  73 Informationswissenschaften
+  33 Mathematik
+  46 Physik
+----
++
+.Tipp für den Stream
+[%collapsible]
+====
+* Benutzen Sie `collect(Collectors.groupingBy(...))`, um eine `Map` zu erzeugen.
+* `Map` hat eine Methode `forEach`, die einen `BiConsumer` nimmt.
+
+.Implementierungs-Vorlage
+[%collapsible]
+=====
+[source,java]
+----
+studis.stream()
+        .____(Collectors.____(____, Collectors.counting()))
+        .forEach((fach, anzahl) -> ____);
+----
+=====
+====
++
+.Tipp für die Ausgabe
+[%collapsible]
+====
+Verwenden Sie `printf` und den Platzhalter `%4d`, um eine bis zu vierstellige Zahl rechtsbündig auszurichten, z. B. `System.out.printf("%4d %s", 42, "Naturwissenschaften");` für `  42 Naturwissenschaften`.
+====
+
+
+* Sortieren Sie die Fächer in absteigender Reihenfolge nach der Häufigkeit:
++
+----
+ 359 Informatik
+  73 Informationswissenschaften
+  46 Physik
+  33 Mathematik
+  22 Anderer
+----
++
+TIP: Eine Möglichkeit: Verwenden Sie das Ergebnis von `groupingBy` und streamen Sie über das `entrySet`. Benutzen Sie zum Sortieren den Comparator `Map.Entry.comparingByValue()`.
+
+* Geben Sie (irgendwie) pro Studiengang die durchschnittlichen Übungspunkte aus.
++
+----
+302,85 Physik
+224,46 Informatik
+335,35 Mathematik
+151,65 Informationswissenschaften
+162,82 Anderer
+----
+
+=== Eigene Kollektoren
+
+Collectoren benutzen wir, um an Ende einen Stream auf „einen“ Wert zu reduzieren, z. B. eine Liste der Stream-Elemente, das Maximum oder das erste Element.
+In der Stream-API gibt es für die allermeisten Anwendungsfälle schon eigene Collectoren, z. B. um einen Stream in eine Liste oder ein Set zu überführen, den Durchschnitt zu berechnen oder zu gruppieren.
+
+Um zur Übung mal etwas eigenen schreiben zu können, müssen wir uns leider schon etwas Komplizierteres ausdenken: Wir wollen den Inhalt einer https://de.wikipedia.org/wiki/YAML[yml-Datei] in eine `HashMap` überführen.
+
+* Vervollständigen Sie die `main`-Methode in der Klasse `ConfigParser`, welche den Inhalt einer yml-Datei Zeile für Zeile in eine `HashMap<String,String>` sammelt. Wir rufen dafür die `collect`-Methode des Stream-Objekts mit passenden Funktionen auf:
+
+1. `Supplier`: Funktion, welche (hier) eine neue Collection (`HashMap`) zum Sammeln der Daten erzeugt
+2. `BiConsumer`: Funktion, welche (hier) eine `HashMap` und das nächste Element (Zeile (`String`) der Datei) erhält
+3. `BiConsumer`: Funktion, welche zwei Teilergebnisse (``HashMap``s) in das erste Teilergebnis kombiniert (Einträge der zweiten `HashMap` zur ersten hinzufügt – das wird für parallele Streams benötigt)
+
+[TIP]
+====
+Sie können die vorgegebene `parseConfigLine` Methode nutzen um die Key-Value-Pärchen zu ermitteln:
+[source,java]
+----
+ConfigEntry entry = parseConfigLine(line);
+String key = entry.key;
+String value = entry.value;
+----
+
+Passen Sie auf, dass Sie keine zu riesigen Lambda-Ausdrücke schreiben. Schreiben Sie ggf. statische Hilfsmethoden und verwenden Sie Methodenreferenzen.
+====
+
+Die Ausgabe sollte dann ungefähr folgende sein:
+[source]
+----
+{hostname=propra.bendisposto.de, tage_bis_zur_klausur=96, panik_level=chill, message_of_the_day=uebung 3 ist toll, magic_number_of_the_day=42}
+----
+
+WARNING: Da https://de.wikipedia.org/wiki/YAML[YAML] https://docs.docker.com/compose/[sehr] https://docs.github.com/en/enterprise-server@3.5/actions/using-workflows/workflow-syntax-for-github-actions[ver] https://docs.gitlab.com/ee/ci/yaml/gitlab_ci_yaml.html[brei] https://docs.travis-ci.com/user/build-config-yaml[tet] ist und die Dateien im Allgemeinen wesentlich komplizierter aufgebaut sind als unser Beispiel, gibt es fertige Bibliotheken zum Einlesen von yml-Dateien. Benutzen Sie in der Praxis auf jeden Fall die fertigen Bibliotheken!
+
+==== Collector-Klasse
+
+Falls wir vorhaben, diese Einlese-Collections-Funktionalität an mehreren Stellen in unserem Programm zu benutzen, lohnt es sich, die drei Methoden in eine eigene Klasse zu verpacken, die das `Collector`-Interface implementiert. Eine Instanz dieser Klasse können wir dann direkt an die `collect`-Methode des Streams übergeben.
+
+Probieren Sie das einmal aus. Schauen Sie sich die Dokumentation des `Collector`-Interfaces an.
+
+.Implementierungs-Vorlage
+[%collapsible]
+====
+[source,java]
+----
+private static class YamlCollector implements Collector<String, Map<String,String>, Map<String,String>> {
+    @Override
+    public Supplier<Map<String, String>> supplier() {
+        return // TODO
+    }
+
+    @Override
+    public BiConsumer<Map<String, String>, String> accumulator() {
+        return // TODO
+    }
+
+    @Override
+    public BinaryOperator<Map<String, String>> combiner() {
+        return // TODO (Achtung: BinaryOperator, nicht BiFunction)
+    }
+
+    @Override
+    public Function<Map<String, String>, Map<String, String>> finisher() {
+        return map -> map; // Übersetzt internes Zwischenergebnis in Endergebnis; bei uns langweilig
+    }
+
+    @Override
+    public Set<Characteristics> characteristics() {
+            return Set.of(Characteristics.UNORDERED, Characteristics.IDENTITY_FINISH); // wird von der Stream-API benutzt, um die Ausführung des Streams zu optimieren
+    }
+}
+----
+====
+
+=== Reduce
+
+* Nutzen Sie die Stream-API, um den größten gemeinsamen Teiler (greatest common divisor, GCD) einer Integer-Liste zu berechnen. Da es sich um eine immutable reduction handelt, sollten Sie eine Lösung mit `reduce` verwenden.
++
+NOTE: Implementieren Sie GCD nicht selbst. Wandeln Sie alle `Integer` in `BigInteger` um (mit der statischen Factory-Methode `BigInteger.valueOf`) und nutzen Sie die eingebaute `gcd`-Methode.
+
+* Knobelaufgabe: Kann dieselbe Funktionalität auch mit `collect` umgesetzt werden?
++
+NOTE: Sie müssen für einen Collector den Wert, in den Sie akkumulieren, verändern.
+Java-Integer sind immutable, daher gibt es hier Probleme. Nutzen Sie einen ähnlichen Trick
+wie die https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/Collectors.java#L644[Standard-Implementierung von `summingInt`] und verwenden Sie ein `AtomicInteger`-Objekt oder `int[1]`.
++
+WARNING: Dass `summingInt` ein Array verwendet, hat Performance-Gründe. Sie würden in der Praxis zum Summieren `reduce` vorziehen, es sei denn Sie haben gemessen, dass `reduce` die Geschwindigkeit Ihrer Anwendung signifikant beeinflusst.
+
+
+
+=== Zusatzmaterial
+
+* https://media.hhu.de/video/die-foreach-methode-des-iterable-interfaces/f320c854914b051a18881623db76a88a[Was steckt konzeptionell hinter den Lambda-Objekten?]
+
+
+
+== Tipp der Woche: Fira Code
+
+https://github.com/tonsky/FiraCode[Fira Code] ist eine spezielle Schriftart, die zum Anzeigen von Quelltext entwickelt wurde. Um auf einer Standardtastatur Symbole wie `≠`, `≤`, `→` usw. einfacher eintippen zu können, werden Sie in Java (und vielen anderen Sprachen) als `!=`, `<=`, `->` usw. geschrieben. (Achtung: GitHub zeigt die Symbole evtl. auch schon „besonders“ an; schauen Sie sich die `README.adoc` mal in einem einfachen Texteditor an.)
+
+Es gibt aber spezielle Schriftarten wie Fira Code, die diese Zeichenfolgen als `≠`, `≤`, `→` darstellen – in der Datei werden aber weiterhin die Zeichenfolgen `!=`, `<=`, `->` gespeichert. Technisch wird das mithilfe sogenannter https://de.wikipedia.org/wiki/Ligatur_(Typografie)[Ligaturen] umgesetzt.
+
+////
+== Tipp der Woche: Rainbow Brackets
+
+Wenn an einer Stelle sehr viele (v. a. schließende) Klammern aufeinandertreffen, kann man schnell den Überblick verlieren, welche öffnende Klammer zu welcher schließenden Klammer gehört. Oft kann hier das Einführen einer neuen Variablen mehr Übersicht verschaffen. Für alle anderen Fälle kann man in vielen Editoren (ggf. per Plugin) zusammengehörige Klammern in einer eigenen Farbe anzeigen lassen:
+
+image::rainbow_brackets.png[title="Bunte Klammern in IntelliJ mithilfes des Plugins „Rainbow Brackets“. Beachten Sie die unterschiedlichen Farben bei »}));«."]////
